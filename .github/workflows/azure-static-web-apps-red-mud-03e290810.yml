@@ -11,45 +11,21 @@ on:
 
 jobs:
   build_and_deploy_job:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
-    name: Build and Deploy Job
+    name: Build and Deploy
     steps:
       - uses: actions/checkout@v3
         with:
           submodules: true
           lfs: false
 
-      - name: Build And Deploy
+      - name: Build and Deploy to Azure Static Web App
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
-          # Replace with the correct API Token from Azure
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_RED_MUD_03E290810 }}  
-          # GitHub token for PR comments, etc.
-          repo_token: ${{ secrets.GITHUB_TOKEN }}  
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}  # Ensure this is the correct token
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          
-          ###### Repository/Build Configurations ######
-          # Point to the folder where your Angular app is located
-          app_location: "/"  # Use the correct path if your app is in a subfolder (e.g., "frontend")
-          
-          # If you have an API, specify the location here, or leave it empty
-          api_location: ""  
-          
-          # Output location is where your Angular app build is generated (typically in dist/ folder)
-          output_location: "dist/ecommerce"  # Change this path if your build output is in a different folder
-          ###### End of Repository/Build Configurations ######
-
-  close_pull_request_job:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed'
-    runs-on: ubuntu-latest
-    name: Close Pull Request Job
-    steps:
-      - name: Close Pull Request
-        id: closepullrequest
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          # Use the same API Token here for closing PR deployments
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_RED_MUD_03E290810 }}
-          action: "close"
+          app_location: "/"  # Set this to the correct folder if needed (e.g., "frontend")
+          api_location: ""  # Leave empty if no API is being deployed
+          output_location: "dist/ecommerce"  # Make sure this is your Angular build folder
